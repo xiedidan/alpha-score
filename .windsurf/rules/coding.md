@@ -11,6 +11,47 @@ Binance Alpha 自动化交易工具 - Web管理界面 + 自动化脚本
   - 开发环境：Vite Proxy（已配置在vite.config.ts）
   - 生产环境：Caddy（自动HTTPS，配置简单）
 
+## 项目文件结构
+
+```
+alpha-score/
+├── backend/                    # 后端服务
+│   ├── api/routes/             # API路由 (auth, config, logs, trades)
+│   ├── models/                 # 数据模型 (SQLAlchemy)
+│   ├── utils/                  # 工具 (config, logger, jwt, security)
+│   ├── modules/                # 业务模块(待实现)
+│   └── main.py                 # FastAPI主应用
+├── frontend/                   # 前端应用
+│   ├── src/
+│   │   ├── api/                # API客户端
+│   │   ├── pages/              # 页面 (Login, Dashboard)
+│   │   ├── stores/             # Pinia状态管理
+│   │   ├── router/             # Vue Router
+│   │   └── layouts/            # 布局组件
+│   └── vite.config.ts          # Vite配置
+├── config/                     # 配置文件
+│   ├── settings.yaml           # 应用配置
+│   ├── ladders.yaml            # 积分配置
+│   └── secrets.yaml            # 敏感配置(gitignore)
+├── deployment/                 # 部署配置
+│   ├── caddy/                  # Caddy反向代理
+│   ├── docker/                 # Docker容器化
+│   ├── nginx/                  # Nginx反向代理
+│   └── systemd/                # Systemd服务
+├── tasks/                      # 任务管理
+│   ├── details/                # 任务详情
+│   └── TASKS.md                # 任务看板
+├── logs/                       # 日志(gitignore)
+├── data/                       # 数据库(gitignore)
+└── docs/                       # 文档
+```
+
+### 关键目录
+- `backend/api/routes/`: API端点按模块分文件
+- `frontend/src/stores/`: Pinia状态管理
+- `config/`: YAML配置,Pydantic验证
+- `deployment/`: 4种部署方式(Docker/Systemd/Nginx/Caddy)
+
 ## 部署架构决策
 
 ### 开发环境

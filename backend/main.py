@@ -5,8 +5,10 @@ FastAPI应用主入口
 from datetime import datetime
 from typing import Any, Dict
 import time
+import random
+import asyncio
 
-from fastapi import FastAPI, Request, status
+from fastapi import FastAPI, Request, status, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -16,6 +18,15 @@ from api.routes import auth_router
 from api.routes.config import router as config_router
 from api.routes.logs import router as logs_router
 from api.routes.trades import router as trades_router
+
+# 导入WebSocket管理器
+from api.websocket import (
+    manager,
+    create_price_update,
+    create_orderbook_update,
+    create_trade_executed,
+    create_system_status
+)
 
 # 配置日志 - 使用新的日志模块
 from utils.logger import logger, setup_logger
@@ -235,6 +246,120 @@ async def api_info() -> Dict[str, Any]:
     )
 
 
+# ============ WebSocket端点 ============
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    """
+    WebSocket端点 - 实时数据推送
+
+    连接URL: ws://localhost:8000/ws
+
+    消息类型:
+    - price_update: 价格更新
+    - orderbook_update: 盘口更新
+    - trade_executed: 交易执行
+    - system_status: 系统状态
+    - ping: 心跳检测
+    """
+    # 获取客户端信息
+    client_host = websocket.client.host if websocket.client else "unknown"
+    client_id = f"client_{client_host}"
+
+    await manager.connect(websocket, client_id)
+
+    try:
+        while True:
+            # 接收客户端消息
+            data = await websocket.receive_text()
+            logger.debug(f"收到客户端消息: {data}")
+
+            # 处理pong响应
+            if data == "pong":
+                logger.debug("收到心跳pong响应")
+                continue
+
+            # 这里可以根据需要处理其他客户端消息
+            # 暂时只回显消息
+            await manager.send_personal_message({
+                "type": "echo",
+                "data": {"message": f"服务器收到: {data}"},
+                "timestamp": datetime.utcnow().isoformat() + "Z"
+            }, websocket)
+
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+        logger.info(f"WebSocket客户端断开: {client_id}")
+    except Exception as e:
+        logger.error(f"WebSocket错误: {e}", exc_info=True)
+        manager.disconnect(websocket)
+
+
+@app.get("/ws/connections", tags=["WebSocket"])
+async def get_connections() -> Dict[str, Any]:
+    """
+    获取当前WebSocket连接数
+
+    Returns:
+        连接统计信息
+    """
+    return create_response(
+        message="WebSocket连接统计",
+        data={
+            "active_connections": manager.get_connection_count(),
+            "timestamp": datetime.utcnow().isoformat() + "Z"
+        }
+    )
+
+
+@app.post("/ws/broadcast/test", tags=["WebSocket"])
+async def broadcast_test_message() -> Dict[str, Any]:
+    """
+    测试广播 - 发送模拟数据到所有WebSocket连接
+
+    用于测试WebSocket功能，向所有连接的客户端广播模拟数据
+    """
+    if manager.get_connection_count() == 0:
+        return create_response(
+            code=400,
+            message="没有活跃的WebSocket连接",
+            data={}
+        )
+
+    # 广播价格更新
+    price_msg = create_price_update(
+        symbol="KOGE/USDT",
+        price=round(0.005 + random.uniform(-0.0002, 0.0002), 6),
+        change_24h=round(random.uniform(-0.05, 0.05), 4)
+    )
+    await manager.broadcast(price_msg)
+
+    # 广播盘口更新
+    orderbook_msg = create_orderbook_update(
+        bids=[[round(0.005 - i * 0.00001, 6), random.randint(500, 2000)] for i in range(5)],
+        asks=[[round(0.005 + i * 0.00001, 6), random.randint(500, 2000)] for i in range(5)]
+    )
+    await manager.broadcast(orderbook_msg)
+
+    # 广播系统状态
+    status_msg = create_system_status(
+        mode=random.choice(["auto", "manual", "paused"]),
+        points_today=round(random.uniform(10, 20), 2),
+        volume_today=round(random.uniform(5000, 15000), 2)
+    )
+    await manager.broadcast(status_msg)
+
+    logger.info(f"测试广播已发送到 {manager.get_connection_count()} 个客户端")
+
+    return create_response(
+        message="测试消息已广播",
+        data={
+            "connections": manager.get_connection_count(),
+            "messages_sent": 3
+        }
+    )
+
+
 # ============ 生命周期事件 ============
 
 @app.on_event("startup")
@@ -247,6 +372,7 @@ async def startup_event():
     logger.info("  - /api/config/*  (Configuration)")
     logger.info("  - /api/logs/*    (Logs)")
     logger.info("  - /api/trades/*  (Trading)")
+    logger.info("  - /ws            (WebSocket)")
     logger.info("=" * 60)
 
 

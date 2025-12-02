@@ -17,6 +17,110 @@ Binance Alpha 自动化交易工具 - 用于自动化获取 Alpha 积分和网�
   - 开发环境：Vite Proxy（已配置在vite.config.ts）
   - 生产环境：Caddy（自动HTTPS，配置简单）
 
+## 项目文件结构
+
+```
+alpha-score/
+├── backend/                    # 后端服务
+│   ├── api/                   # API路由
+│   │   ├── dependencies.py    # 依赖注入（JWT认证等）
+│   │   └── routes/            # 路由模块
+│   ├── models/                # 数据模型
+│   ├── modules/               # 业务模块（预留）
+│   │   ├── behavior/          # 行为模拟
+│   │   ├── browser/           # 浏览器自动化
+│   │   ├── execution/         # 交易执行
+│   │   ├── llm/               # LLM集成
+│   │   ├── osd/               # OSD窗口
+│   │   ├── risk/              # 风控模块
+│   │   └── strategy/          # 策略模块
+│   ├── utils/                 # 工具模块
+│   ├── scripts/               # 脚本
+│   ├── main.py                # FastAPI主应用
+│   ├── requirements.txt       # Python依赖
+│   └── pytest.ini             # 测试配置
+│
+├── frontend/                  # 前端应用
+│   ├── src/
+│   │   ├── api/               # API客户端
+│   │   ├── components/        # 通用组件
+│   │   ├── layouts/           # 布局组件
+│   │   ├── pages/             # 页面组件
+│   │   ├── router/            # 路由配置
+│   │   ├── stores/            # 状态管理
+│   │   ├── types/             # TypeScript类型
+│   │   ├── utils/             # 工具函数
+│   │   ├── App.vue            # 根组件
+│   │   └── main.ts            # 入口文件
+│   ├── public/                # 静态资源
+│   ├── index.html             # HTML模板
+│   ├── package.json           # Node依赖
+│   ├── vite.config.ts         # Vite配置
+│   └── tsconfig.json          # TypeScript配置
+│
+├── config/                    # 配置文件
+│   ├── settings.yaml          # 应用配置（系统、交易、风控等）
+│   ├── ladders.yaml           # 积分阶梯配置
+│   ├── secrets.yaml           # 敏感配置（API密钥、JWT密钥）
+│   └── secrets.yaml.example   # 敏感配置示例
+│
+├── deployment/                # 部署配置
+│   ├── caddy/                 # Caddy反向代理
+│   ├── docker/                # Docker容器化
+│   ├── nginx/                 # Nginx反向代理
+│   ├── systemd/               # Systemd服务
+│   └── README.md              # 部署文档总览
+│
+├── docs/                      # 文档
+│
+├── tasks/                     # 任务管理（多Agent协作）
+│   ├── details/
+│   │   ├── todo/              # 待办任务详情
+│   │   ├─ doing/             # 进行中任务详情
+│   │   ├── done/              # 完成任务详情
+│   │   └── blocked/           # 阻塞任务详情
+│   ├── TASK_TEMPLATE.md       # 任务模板
+│   └── README.md              # 任务管理指南
+│
+├── logs/                      # 日志目录（gitignore）
+│   ├── app/                   # 应用日志（30天保留）
+│   ├── error/                 # 错误日志（60天保留）
+│   └── trade/                 # 交易日志（90天保留）
+│
+├── data/                      # 数据目录（gitignore）
+│   └── *.db                   # SQLite数据库
+│
+├── tests/                     # 测试（预留）
+│   ├── unit/                  # 单元测试
+│   ├── integration/           # 集成测试
+│   └── e2e/                   # 端到端测试
+│
+└── TASKS.md                   # 任务看板
+```
+
+### 重要目录说明
+
+#### 后端 (backend/)
+- `api/routes/`: 所有API端点，按功能模块分文件
+- `models/`: SQLAlchemy数据模型，每个表一个文件
+- `utils/`: 可复用工具（配置、日志、JWT、安全）
+- `modules/`: 核心业务逻辑（待实现）
+
+#### 前端 (frontend/)
+- `api/`: API调用封装，对应后端路由
+- `stores/`: Pinia状态管理，按领域划分
+- `pages/`: 页面组件，对应路由
+- `layouts/`: 布局组件，包含导航
+
+#### 配置 (config/)
+- `settings.yaml`: 公开配置
+- `secrets.yaml`: 敏感配置（已gitignore）
+- 使用Pydantic验证，支持热重载
+
+#### 部署 (deployment/)
+- 支持4种部署方式：Docker、Systemd+Nginx、Systemd+Caddy、手动
+- 每种方式都有详细的README文档
+
 ## 部署架构
 
 ### 开发环境
@@ -56,23 +160,8 @@ Binance Alpha 自动化交易工具 - 用于自动化获取 Alpha 积分和网�
 ## 📊 会话管理规范
 
 ### 上下文监控
-- **监控阈值**: 当上下文使用达到 **90%** 时，必须主动提醒用户
 - **任务完成汇报**: 每个任务完成后，必须显示当前上下文使用情况
   - 格式：`已使用Token: X / 200,000 (XX.X%)`
-  - 示例：`已使用Token: 53,264 / 200,000 (26.6%)`
-- **提醒内容**:
-  - 当前token使用量和百分比
-  - 建议用户总结关键信息或开始新会话
-  - 提供当前会话的重要成果摘要
-- **日常检查**: 在执行大型任务前检查剩余上下文是否充足
-- **优化建议**:
-  - 定期清理不需要的后台进程
-  - 避免重复读取大文件
-  - 及时总结和归档已完成的任务信息
-
-### 后台进程管理
-- 定期检查和清理已完成或失败的后台bash进程
-- 长时间运行的进程应当有明确的监控和终止条件
 
 ---
 

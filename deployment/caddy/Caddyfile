@@ -1,0 +1,95 @@
+# Alpha-Score Caddy配置
+# 用于反向代理后端API和前端静态文件
+
+# ============ 开发环境配置 ============
+localhost {
+    # API反向代理
+    reverse_proxy /api/* localhost:8000 {
+        # 健康检查
+        health_uri /health
+        health_interval 10s
+        health_timeout 5s
+    }
+
+    # WebSocket支持
+    reverse_proxy /ws/* localhost:8000 {
+        header_up Upgrade {http.request.header.Upgrade}
+        header_up Connection {http.request.header.Connection}
+    }
+
+    # 静态文件服务（前端）
+    root * /var/www/alpha-score/frontend/dist
+    try_files {path} /index.html
+    file_server
+
+    # 安全头
+    header {
+        # HSTS
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        # 防止点击劫持
+        X-Frame-Options "SAMEORIGIN"
+        # 防止MIME类型嗅探
+        X-Content-Type-Options "nosniff"
+        # XSS保护
+        X-XSS-Protection "1; mode=block"
+        # CSP策略
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';"
+    }
+
+    # 压缩
+    encode gzip zstd
+
+    # 日志
+    log {
+        output file /var/log/caddy/alpha-score-access.log {
+            roll_size 100mb
+            roll_keep 10
+            roll_keep_for 720h
+        }
+        format json
+    }
+}
+
+# ============ 生产环境配置示例 ============
+# 取消注释并修改为实际域名
+# alpha-score.example.com {
+#     # API反向代理
+#     reverse_proxy /api/* localhost:8000 {
+#         health_uri /health
+#         health_interval 10s
+#         health_timeout 5s
+#     }
+#
+#     # WebSocket支持
+#     reverse_proxy /ws/* localhost:8000 {
+#         header_up Upgrade {http.request.header.Upgrade}
+#         header_up Connection {http.request.header.Connection}
+#     }
+#
+#     # 静态文件服务
+#     root * /var/www/alpha-score/dist
+#     try_files {path} /index.html
+#     file_server
+#
+#     # 安全头
+#     header {
+#         Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+#         X-Frame-Options "SAMEORIGIN"
+#         X-Content-Type-Options "nosniff"
+#         X-XSS-Protection "1; mode=block"
+#         Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';"
+#     }
+#
+#     # 压缩
+#     encode gzip zstd
+#
+#     # 日志
+#     log {
+#         output file /var/log/caddy/alpha-score-access.log {
+#             roll_size 100mb
+#             roll_keep 10
+#             roll_keep_for 720h
+#         }
+#         format json
+#     }
+# }

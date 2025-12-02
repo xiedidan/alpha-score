@@ -1,0 +1,108 @@
+# ==========================================
+# Alpha-Score Docker Compose配置
+# ==========================================
+
+version: '3.8'
+
+services:
+  # ============ 后端服务 ============
+  backend:
+    build:
+      context: ../..
+      dockerfile: deployment/docker/Dockerfile.backend
+    container_name: alpha-score-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      # 配置文件
+      - ../../config:/app/config:ro
+      # 日志持久化
+      - ../../logs:/app/logs
+      # 数据持���化
+      - ../../data:/app/data
+    environment:
+      # 可在.env文件中配置
+      - PYTHONUNBUFFERED=1
+    env_file:
+      - ../../.env
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - alpha-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ============ 前端服务 ============
+  frontend:
+    build:
+      context: ../..
+      dockerfile: deployment/docker/Dockerfile.frontend
+    container_name: alpha-score-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    networks:
+      - alpha-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ============ Caddy反向代理（可选） ============
+  caddy:
+    image: caddy:2-alpine
+    container_name: alpha-score-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../caddy/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+      # 前端静态文件
+      - ../../frontend/dist:/var/www/alpha-score/frontend/dist:ro
+    depends_on:
+      - backend
+    networks:
+      - alpha-network
+    profiles:
+      - caddy  # 使用 --profile caddy 启动
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# ============ 网络配置 ============
+networks:
+  alpha-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# ============ 数据卷 ============
+volumes:
+  caddy_data:
+    driver: local
+  caddy_config:
+    driver: local

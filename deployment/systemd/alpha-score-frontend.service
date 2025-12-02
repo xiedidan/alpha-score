@@ -1,0 +1,36 @@
+[Unit]
+Description=Alpha-Score Frontend Development Server
+After=network.target alpha-score-backend.service
+
+[Service]
+Type=simple
+User=xd
+Group=xd
+WorkingDirectory=/home/xd/project/alpha-score/frontend
+
+# 环境变量
+Environment="NODE_ENV=production"
+Environment="PATH=/usr/local/bin:/usr/bin"
+
+# 启动命令（生产环境建议使用nginx托管静态文件）
+# 开发环境可以使用npm run dev
+ExecStart=/usr/bin/npm run preview -- --host 0.0.0.0 --port 5173
+
+# 重启策略
+Restart=always
+RestartSec=10
+
+# 资源限制
+LimitNOFILE=65535
+MemoryLimit=512M
+
+# 安全加固
+NoNewPrivileges=true
+PrivateTmp=true
+
+# 标准输出和错误输出
+StandardOutput=append:/home/xd/project/alpha-score/logs/systemd/frontend-stdout.log
+StandardError=append:/home/xd/project/alpha-score/logs/systemd/frontend-stderr.log
+
+[Install]
+WantedBy=multi-user.target

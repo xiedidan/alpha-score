@@ -1,0 +1,67 @@
+# ==========================================
+# Docker相关忽略文件
+# ==========================================
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 环境文件
+.env
+.env.*
+!.env.example
+
+# 配置文件（敏感）
+config/secrets.yaml
+config/*.secret
+
+# 数据和日志
+data/
+logs/
+*.log
+*.db
+*.sqlite*
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# 文档和测试
+docs/
+tests/
+*.md
+!README.md
+
+# 临时文件
+tmp/
+temp/
+*.tmp
+*.bak
+
+# 构建产物
+dist/
+build/
+*.egg-info/
+
+# 浏览器自动化
+chrome-user-data/
+sessions/
