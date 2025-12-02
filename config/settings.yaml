@@ -1,0 +1,80 @@
+# Alpha-Score 主配置文件
+
+# 系统配置
+system:
+  debug_port: 9222
+  api_port: 8000
+  log_level: INFO
+  environment: development  # development | production | testing
+
+# 交易配置
+trading:
+  target_points_per_day: 5  # 每日目标积分
+  max_trade_count: 50       # 每日最大交易次数
+  min_order_value: 10       # 最小订单价值 (USDT)
+  max_order_value: 100      # 最大订单价值 (USDT)
+  price_deviation: 0.001    # 价格偏离度 (0.1%)
+  check_interval: 60        # 检查间隔（秒）
+
+# 风控配置
+risk_control:
+  atr:
+    enabled: true
+    period: 14                # ATR 周期
+    multiplier: 1.5           # ATR 倍数
+    interval: 300             # 检查间隔（秒）
+
+  position:
+    max_total_value: 500      # 最大总持仓价值 (USDT)
+    max_single_value: 100     # 单币种最大持仓 (USDT)
+
+  daily_limits:
+    max_loss: 50              # 每日最大亏损 (USDT)
+    max_volume: 5000          # 每日最大交易额 (USDT)
+
+# 行为模拟配置
+behavior:
+  random_delay:
+    enabled: true
+    min: 1                    # 最小延迟（秒）
+    max: 5                    # 最大延迟（秒）
+
+  mouse_simulation:
+    enabled: true
+    speed: medium             # slow | medium | fast
+
+  page_scroll:
+    enabled: true
+    probability: 0.3          # 30%概率滚动
+
+# 通知配置
+notifications:
+  discord:
+    enabled: false
+    webhook: ""
+
+  telegram:
+    enabled: false
+    bot_token: ""
+    chat_id: ""
+
+  email:
+    enabled: false
+    smtp_server: ""
+    smtp_port: 587
+    from_addr: ""
+    to_addr: ""
+
+# 数据库配置
+database:
+  type: sqlite
+  path: data/alpha-score.db
+  echo: false               # SQL 日志
+
+# 日志配置
+logging:
+  level: INFO               # DEBUG | INFO | WARNING | ERROR | CRITICAL
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  rotation: daily           # daily | weekly | size
+  retention: 30             # 保留天数
+  max_size: 100             # 单文件最大大小 (MB)

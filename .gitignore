@@ -1,0 +1,549 @@
+# ==========================================
+# Alpha-Score Project .gitignore
+# ==========================================
+
+# ============ Python ============
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff (if needed)
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff
+instance/
+.webassets-cache
+
+# Scrapy stuff
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# pdm
+.pdm.toml
+
+# PEP 582
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# ============ Node.js / Vue ============
+
+# Dependencies
+node_modules/
+jspm_packages/
+.npm
+.eslintcache
+.stylelintcache
+.node_repl_history
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Build output
+dist/
+dist-ssr/
+*.local
+
+# Frontend specific
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.local
+frontend/.vite
+
+# Testing
+coverage/
+.nyc_output/
+
+# Editor directories
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json.example
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Yarn
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+yarn.lock
+
+# PNPM
+pnpm-lock.yaml
+
+# ============ Project Specific - Sensitive Files ============
+
+# Secrets and credentials (CRITICAL - NEVER COMMIT)
+config/secrets.yaml
+config/secrets.yml
+config/.secrets.yaml
+config/.secrets.yml
+config/*.secret
+config/*.secrets
+config/*.local.yaml
+*.secret
+*.secrets
+*_secret*
+*_secrets*
+credentials.json
+token.json
+
+# API keys and tokens (extra safety)
+*api_key*
+*secret_key*
+*access_token*
+*refresh_token*
+*binance_key*
+*jwt_secret*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+.env.test
+
+# ============ Database ============
+
+# Database files
+data/
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+*.sqlite-shm
+*.sqlite-wal
+
+# ============ Logs ============
+
+# All log files and directories
+logs/
+*.log
+*.log.*
+*.log.zip
+*.log.gz
+*.log.tar
+*.log.tar.gz
+
+# Specific log types
+*.error
+*.warn
+*.info
+*.debug
+
+# ============ Browser Automation ============
+
+# Browser profiles and user data
+browser-profile/
+chrome-user-data/
+edge-user-data/
+.chromium/
+.chrome-debug/
+.edge-debug/
+
+# Browser cache
+.chrome/
+.firefox/
+
+# OSD window position cache
+.osd-position
+
+# Session data
+sessions/
+*.session
+
+# ============ Temporary & Cache Files ============
+
+# Temporary directories
+tmp/
+temp/
+.tmp/
+.temp/
+
+# Cache files
+.cache/
+*.cache
+.parcel-cache/
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+*~
+
+# Swap files
+*.swp
+*.swo
+*.swn
+
+# ============ IDE & Editors ============
+
+# VSCode
+.vscode/
+!.vscode/settings.json.example
+!.vscode/extensions.json
+*.code-workspace
+
+# PyCharm / IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+.netrwhist
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+
+# Cursor
+.cursor/cache/
+.cursor/
+
+# ============ Operating Systems ============
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ============ Testing & Coverage ============
+
+# Unit test / coverage
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+coverage/
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
+# ============ Documentation ============
+
+# Build output
+docs/_build/
+site/
+_site/
+
+# ============ Miscellaneous ============
+
+# Screenshots and videos (unless in docs)
+screenshots/
+videos/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.mp4
+*.avi
+*.mov
+*.wmv
+!docs/**/*.png
+!docs/**/*.jpg
+!docs/**/*.gif
+!README*.png
+!README*.jpg
+
+# Compressed files
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.bz2
+*.gz
+!docs/**/*.zip
+
+# Profiling
+*.prof
+*.lprof
+*.pyprof
+
+# Trading data exports
+exports/
+*.csv
+*.xlsx
+*.xls
+!docs/**/*.csv
+!docs/**/*.xlsx
+
+# Lock files (keep package-lock.json for reproducibility)
+# package-lock.json - keep this
+# yarn.lock - ignored above
+# pnpm-lock.yaml - ignored above
+
+# SSL/TLS certificates (NEVER COMMIT)
+*.key
+*.pem
+*.crt
+*.cer
+*.p12
+*.pfx
+
+# Git conflict markers
+*.orig
+
+# Other
+*.pid
+*.seed
+*.pid.lock
+
+# ============ Project Build Artifacts ============
+
+# Compiled output
+*.pyc
+*.pyo
+*.class
+
+# Package files
+*.egg
+*.whl
+
+# TypeScript
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache
+.parcel-cache
+
+# Next.js build output (if used)
+.next
+out
+
+# Nuxt.js build / generate output (if used)
+.nuxt
+dist
+
+# Gatsby files (if used)
+.cache/
+public
+
+# vuepress build output (if used)
+.vuepress/dist
+
+# Serverless directories (if used)
+.serverless/
+
+# FuseBox cache (if used)
+.fusebox/
+
+# DynamoDB Local files (if used)
+.dynamodb/
+
+# TernJS port file (if used)
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# ============ Special Notes ============
+
+# Keep empty directories
+!.gitkeep
+
+# Allow specific config examples
+!config/settings.yaml.example
+!config/ladders.yaml.example
+
+# Allow documentation assets
+!docs/
